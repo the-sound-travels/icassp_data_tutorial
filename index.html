@@ -226,6 +226,51 @@
             font-weight: 600;
         }
 
+        .progress-container {
+            display: none;
+            margin-top: 15px;
+            gap: 12px;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .progress-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #2a3142;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #5dade2 0%, #85c1e9 100%);
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(93, 173, 226, 0.6);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .time-current {
+            color: #5dade2;
+            font-weight: 600;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -272,7 +317,7 @@
 <body>
     <div class="container">
         <!-- Header with badges -->
-        <h1>📡 Acquiring & Visualising <br> Academic Research Trends</h1>
+        <h1>📡 Acquiring & Visualising Academic Research Trends</h1>
 
         <div class="badges-container">
             <a href="https://www.linkedin.com/company/brics-eu/" target="_blank">
@@ -349,7 +394,7 @@
 
         <!-- Video Section -->
         <div class="video-section">
-            <h3>Watch our sponsor's video <u> on this page </u> to unlock access to the notebook.</h3>
+            <h3>Watch our Sponsor's video in this page to unlock the access to the notebook.</h3>
             <button class="play-cta-button" id="playCtaButton" aria-label="Play video">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                     <path d="M8 5v14l11-7z"/>
@@ -359,7 +404,7 @@
             <div class="video-container">
                 <iframe 
                     id="youtubeVideo"
-                    src="https://www.youtube.com/embed/bLXKj_06Lkg?modestbranding=1&rel=0&showinfo=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&enablejsapi=1"
+                    src="https://www.youtube.com/embed/s4N_j8xc264?modestbranding=1&rel=0&showinfo=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&enablejsapi=1"
                     allowfullscreen
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
                 </iframe>
@@ -368,6 +413,19 @@
                         <path d="M8 5v14l11-7z"/>
                     </svg>
                 </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="time-display">
+                        <span class="time-current"><span id="currentTime">0:00</span></span>
+                        <span class="time-total"><span id="totalDuration">0:00</span></span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -378,7 +436,7 @@
             </div>
 
             <div class="colab-button-container" id="colabButtonContainer">
-                <a href="https://colab.research.google.com/github/the-sound-travels/icassp_data_tutorial/blob/main/Research_Analytics_IEEE_ICASSP_Case_Study.ipynb" 
+                <a href="https://colab.research.google.com/github/GuitarsAI/AudioCodingTutorials/blob/master/AC_01_Basics_Multirate.ipynb" 
                    target="_blank"
                    id="colabLink">
                     🚀 Launch on Google Colab
@@ -399,6 +457,10 @@
         const colabLink = document.getElementById('colabLink');
         const customPlayButton = document.getElementById('customPlayButton');
         const playCtaButton = document.getElementById('playCtaButton');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const totalDurationEl = document.getElementById('totalDuration');
 
         const REQUIRED_SECONDS = 35;
         const DEFAULT_LOCKED_TEXT = '👉 Watch the video above to unlock access';
@@ -409,6 +471,25 @@
         let hasWatched35Seconds = false;
         let hasCheated = false; // once true, stays true for the session
         let watchTimer;
+        let videoDuration = 0;
+
+        // Format time in MM:SS format
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Update progress bar display
+        function updateProgressBar() {
+            if (!player || videoDuration === 0) return;
+
+            const currentTime = player.getCurrentTime();
+            const progressPercent = (currentTime / videoDuration) * 100;
+
+            progressFill.style.width = progressPercent + '%';
+            currentTimeEl.textContent = formatTime(currentTime);
+        }
 
         // YouTube IFrame API
         let player;
@@ -427,7 +508,11 @@
         };
 
         function onPlayerReady(event) {
-            // Player is ready
+            // Get video duration when player is ready
+            if (player && typeof player.getDuration === 'function') {
+                videoDuration = player.getDuration();
+                totalDurationEl.textContent = formatTime(videoDuration);
+            }
         }
 
         function onPlayerStateChange(event) {
@@ -436,6 +521,7 @@
                 // Hide both play buttons while the video plays.
                 customPlayButton.classList.add('hidden');
                 playCtaButton.classList.add('hidden');
+                progressContainer.style.display = 'flex';
                 watchTimer = setInterval(checkWatchProgress, 500);
             } else if (event.data === YT.PlayerState.PAUSED) {
                 clearInterval(watchTimer);
@@ -453,6 +539,9 @@
             const currentTime = player.getCurrentTime();
             const duration = player.getDuration();
             const delta = currentTime - lastCheckedTime;
+
+            // Update progress bar display
+            updateProgressBar();
 
             // Only count time that looks like real, continuous playback.
             // A normal 500ms poll should advance ~0.5s. Anything much larger
@@ -493,6 +582,7 @@
                 player.pauseVideo();
             }
 
+            progressContainer.style.display = 'none';
             customPlayButton.classList.remove('hidden');
             playCtaButton.classList.remove('hidden');
             showLockedMessage();
