@@ -28,7 +28,7 @@ A comprehensive Python tutorial demonstrating how to collect, process, analyze, 
 Developed in collaboration with the **BRICS+EU Think Tank** and the **BRICS+ Audio, Acoustics and Music Technology Group**, this notebook is intended for students, early-career researchers, educators, and practitioners interested in learning practical data acquisition, data analysis, bibliometric analysis, and scientific visualization with Python.
 
 <p align="center">
-<a href="https://colab.research.google.com/github/the-sound-travels/icassp_data_tutorial/blob/main/Research_Analytics_IEEE_ICASSP_Case_Study.ipynb" target="_blank">
+<a href="https://the-sound-travels.github.io/icassp_data_tutorial/" target="_blank">
   <img
     src="https://colab.research.google.com/assets/colab-badge.svg"
     alt="Open in Colab"
