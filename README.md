@@ -1,4 +1,4 @@
-# Research Analytics with Python: An IEEE ICASSP Case Study
+# Research Analytics with Python: <br> An IEEE ICASSP Case Study
 
 <p align="center">
   <strong>
