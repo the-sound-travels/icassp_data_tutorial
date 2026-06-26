@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📡 Acquiring & Visualising Academic Research Trends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0f1419;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #1a1f2b;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .badges-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .badges-container a img {
+            height: 25px;
+            transition: transform 0.2s;
+        }
+
+        .badges-container a:hover img {
+            transform: scale(1.05);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #333;
+            margin: 30px 0;
+        }
+
+        h2 {
+            color: #ffffff;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            color: #d0d0d0;
+        }
+
+        blockquote {
+            border-left: 4px solid #5dade2;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #aaaaaa;
+            font-style: italic;
+        }
+
+        .video-section {
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .video-section h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .custom-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: rgba(15, 20, 25, 0.75);
+            border: 2px solid #5dade2;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+
+        .custom-play-button:hover {
+            background-color: rgba(93, 173, 226, 0.25);
+            transform: translate(-50%, -50%) scale(1.08);
+        }
+
+        .custom-play-button.hidden {
+            display: none;
+        }
+
+        .play-cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #5dade2;
+            border: 2px solid #5dade2;
+            border-radius: 24px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .play-cta-button:hover {
+            background-color: rgba(93, 173, 226, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .play-cta-button.hidden {
+            display: none;
+        }
+
+        .colab-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .celebration-message {
+            display: none;
+            color: #2ecc71;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        .colab-button-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .colab-button-container a {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid #333;
+        }
+
+        .colab-button-container a:hover {
+            border-color: #5dade2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.3);
+        }
+
+        .colab-button-container.disabled a {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+        }
+
+        .colab-button-container.disabled a:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .locked-message {
+            color: #888;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        .locked-message.warning {
+            color: #f0a868;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        a {
+            color: #5dade2;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .code-inline {
+            background-color: #0f1419;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #ffcc99;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .badges-container {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with badges -->
+        <h1>📡 Acquiring & Visualising Academic Research Trends</h1>
+
+        <div class="badges-container">
+            <a href="https://www.linkedin.com/company/brics-eu/" target="_blank">
+                <img src="https://badgen.net/badge/LinkedIn/BRICS+EU/0A66C2?icon=linkedin" alt="BRICS+EU LinkedIn">
+            </a>
+            <a href="https://www.linkedin.com/in/renato-profeta/" target="_blank">
+                <img src="https://badgen.net/badge/LinkedIn/Renato%20Profeta/0A66C2?icon=linkedin" alt="Renato Profeta LinkedIn">
+            </a>
+            <a href="https://www.linkedin.com/company/brics-audio-acoustics-music-technology/" target="_blank">
+                <img src="https://badgen.net/badge/LinkedIn/BRICS%20Audio%2C%20Acoustics%20%26%20Music%20Technology/0A66C2?icon=linkedin" alt="BRICS Audio LinkedIn">
+            </a>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 15px;">A Python Tutorial with ICASSP Data from IEEE Xplore</h2>
+
+        <hr>
+
+        <!-- Main content -->
+        <h2>What you will learn in this notebook:</h2>
+        <ul>
+            <li>How to install Python libraries and understand what each one does</li>
+            <li>How to acquire structured data from a real academic database (IEEE Xplore) via its REST API</li>
+            <li>How to clean and organise that data using <span class="code-inline">pandas</span></li>
+            <li>How to build a publication-quality donut chart using <span class="code-inline">matplotlib</span></li>
+            <li>How to animate your chart into a GIF across multiple years</li>
+            <li>How to build an interactive HTML visualisation without any web framework</li>
+            <li>How to analyse and plot research trajectories over time</li>
+            <li>How to interpret research output trends, including China's remarkable growth over the last decade</li>
+        </ul>
+
+        <p style="font-size: 1.05em; color: #ffcc99; margin-bottom: 20px;">
+            <strong>No prior Python experience is required.</strong> Every concept is explained before the code that uses it.
+        </p>
+
+        <hr>
+
+        <h2>🎓 About the dataset</h2>
+        <p>
+            <strong>ICASSP</strong> stands for the <em>IEEE International Conference on Acoustics, Speech and Signal Processing</em>. 
+            It is one of the most prestigious and high-volume annual conferences in the world for signal processing, audio, speech technology, 
+            and machine learning research. Each year, thousands of papers are submitted and the accepted ones are published through 
+            <strong>IEEE Xplore</strong> — the IEEE's official digital library, found at <a href="https://ieeexplore.ieee.org" target="_blank">https://ieeexplore.ieee.org</a>.
+        </p>
+
+        <p style="margin-top: 15px;">
+            IEEE Xplore stores rich metadata for every paper, including titles, authors, publication details, and institutional affiliation information. 
+            By analysing those affiliations, we can determine which countries contributed to a paper and build country-level statistics across conference editions.
+        </p>
+
+        <p style="margin-top: 15px;">
+            This makes it possible to answer questions like:
+        </p>
+
+        <blockquote>
+            <em>How many ICASSP papers in 2022 included at least one author affiliated with an institution in China? 
+            How does that compare to the USA? How has it changed over ten years?</em>
+        </blockquote>
+
+        <p style="margin-top: 15px;">
+            That is exactly what this notebook does. We will acquire ICASSP metadata from IEEE Xplore for editions between 2016 and 2026, 
+            derive country participation from author affiliations, and visualise the results in several ways.
+        </p>
+
+        <hr>
+
+        <h2>🗺️ How to use this notebook</h2>
+        <ul>
+            <li>Read the <strong>explanation text</strong> (cells like this one) before running any code</li>
+            <li>Run cells <strong>in order from top to bottom</strong> — later cells depend on earlier ones</li>
+            <li>Cells marked <strong>🏋️ Challenge</strong> are optional exercises to test your understanding</li>
+        </ul>
+
+        <hr>
+
+        <!-- Video Section -->
+        <div class="video-section">
+            <h3>Watch our Sponsor's video in this page to unlock the access to the notebook.</h3>
+            <button class="play-cta-button" id="playCtaButton" aria-label="Play video">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                Click here to play
+            </button>
+            <div class="video-container">
+                <iframe 
+                    id="youtubeVideo"
+                    src="https://www.youtube.com/embed/s4N_j8xc264?modestbranding=1&rel=0&showinfo=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&enablejsapi=1"
+                    allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                </iframe>
+                <button class="custom-play-button" id="customPlayButton" aria-label="Play video">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Colab Section (Initially Hidden) -->
+        <div class="colab-section">
+            <div class="celebration-message" id="celebrationMessage">
+                ✅ Video watched! You can now access the notebook
+            </div>
+
+            <div class="colab-button-container" id="colabButtonContainer">
+                <a href="https://colab.research.google.com/github/GuitarsAI/AudioCodingTutorials/blob/master/AC_01_Basics_Multirate.ipynb" 
+                   target="_blank"
+                   id="colabLink">
+                    🚀 Launch on Google Colab
+                </a>
+            </div>
+
+            <div class="locked-message" id="lockedMessage">
+                👉 Watch the video above to unlock access
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const youtubeVideo = document.getElementById('youtubeVideo');
+        const colabButtonContainer = document.getElementById('colabButtonContainer');
+        const celebrationMessage = document.getElementById('celebrationMessage');
+        const lockedMessage = document.getElementById('lockedMessage');
+        const colabLink = document.getElementById('colabLink');
+        const customPlayButton = document.getElementById('customPlayButton');
+        const playCtaButton = document.getElementById('playCtaButton');
+
+        const REQUIRED_SECONDS = 35;
+        const DEFAULT_LOCKED_TEXT = '👉 Watch the video above to unlock access';
+        const CHEAT_WARNING_TEXT = '⚠️ You must watch at least 35 seconds of the video. The video has been reset — please watch it from the start.';
+
+        let watchedSeconds = 0;
+        let lastCheckedTime = 0;
+        let hasWatched35Seconds = false;
+        let hasCheated = false; // once true, stays true for the session
+        let watchTimer;
+
+        // YouTube IFrame API
+        let player;
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+
+        window.onYouTubeIframeAPIReady = function() {
+            const iframeId = youtubeVideo.id;
+            player = new YT.Player(iframeId, {
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                }
+            });
+        };
+
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                // A legitimate play attempt is underway.
+                // Hide both play buttons while the video plays.
+                customPlayButton.classList.add('hidden');
+                playCtaButton.classList.add('hidden');
+                watchTimer = setInterval(checkWatchProgress, 500);
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                clearInterval(watchTimer);
+                customPlayButton.classList.remove('hidden');
+                playCtaButton.classList.remove('hidden');
+            } else if (event.data === YT.PlayerState.ENDED) {
+                clearInterval(watchTimer);
+                handleVideoEnded();
+            }
+        }
+
+        function checkWatchProgress() {
+            if (!player) return;
+
+            const currentTime = player.getCurrentTime();
+            const duration = player.getDuration();
+            const delta = currentTime - lastCheckedTime;
+
+            // Only count time that looks like real, continuous playback.
+            // A normal 500ms poll should advance ~0.5s. Anything much larger
+            // means a seek/jump happened and must not count as "watched".
+            if (delta > 0 && delta <= 1) {
+                watchedSeconds += delta;
+            }
+            lastCheckedTime = currentTime;
+
+            if (!hasWatched35Seconds && watchedSeconds >= REQUIRED_SECONDS) {
+                hasWatched35Seconds = true;
+            }
+
+            // Catch the "reached the end" case during polling too,
+            // in case the ENDED event doesn't fire reliably on a jump.
+            if (duration > 0 && currentTime >= duration - 0.5) {
+                clearInterval(watchTimer);
+                handleVideoEnded();
+            }
+        }
+
+        function handleVideoEnded() {
+            if (hasWatched35Seconds) {
+                unlock();
+            } else {
+                cheatDetected();
+            }
+        }
+
+        function cheatDetected() {
+            hasCheated = true;
+            watchedSeconds = 0;
+            lastCheckedTime = 0;
+            hasWatched35Seconds = false;
+
+            if (player && typeof player.seekTo === 'function') {
+                player.seekTo(0, true);
+                player.pauseVideo();
+            }
+
+            customPlayButton.classList.remove('hidden');
+            playCtaButton.classList.remove('hidden');
+            showLockedMessage();
+        }
+
+        function showLockedMessage() {
+            lockedMessage.textContent = hasCheated ? CHEAT_WARNING_TEXT : DEFAULT_LOCKED_TEXT;
+            lockedMessage.classList.toggle('warning', hasCheated);
+            lockedMessage.style.display = 'block';
+        }
+
+        function unlock() {
+            colabButtonContainer.style.display = 'block';
+            celebrationMessage.style.display = 'block';
+            lockedMessage.style.display = 'none';
+            customPlayButton.classList.add('hidden');
+            playCtaButton.classList.add('hidden');
+            colabButtonContainer.classList.remove('disabled');
+            colabLink.style.cursor = 'pointer';
+            colabLink.onclick = null; // Make link clickable
+        }
+
+        // Custom play button: the only way to start/resume playback.
+        // No native controls exist on the iframe, so there is no scrub bar
+        // or keyboard seeking available to the user.
+        customPlayButton.addEventListener('click', function() {
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
+        });
+
+        // Second play entry point, positioned above the video, for visibility.
+        // Same action as the on-video button.
+        playCtaButton.addEventListener('click', function() {
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
+        });
+
+        // Prevent clicking the Colab link before it's unlocked
+        colabLink.addEventListener('click', function(e) {
+            if (colabButtonContainer.classList.contains('disabled')) {
+                e.preventDefault();
+            }
+        });
+
+        // Initial state
+        colabButtonContainer.classList.add('disabled');
+        colabLink.style.cursor = 'not-allowed';
+        colabLink.onclick = function(e) {
+            e.preventDefault();
+            return false;
+        };
+        showLockedMessage();
+    </script>
+</body>
+</html>
