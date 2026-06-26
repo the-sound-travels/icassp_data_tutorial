@@ -21,12 +21,20 @@
     <img src="https://badgen.net/badge/LinkedIn/BRICS%2BAudio/0A66C2?icon=linkedin" alt="BRICS+ Audio">
   </a>
 </p>
-
 ---
 
 A comprehensive Python tutorial demonstrating how to collect, process, analyze, and visualize scientific publication data using the IEEE Xplore API. Through a real-world case study based on IEEE ICASSP publications, this repository presents a complete, reproducible workflow that transforms raw publication metadata into meaningful insights, publication-quality visualizations, animations, and interactive dashboards.
 
 Developed in collaboration with the **BRICS+EU Think Tank** and the **BRICS+ Audio, Acoustics and Music Technology Group**, this notebook is intended for students, early-career researchers, educators, and practitioners interested in learning practical data acquisition, data analysis, bibliometric analysis, and scientific visualization with Python.
+
+<p align="center">
+<a href="https://colab.research.google.com/github/the-sound-travels/icassp_data_tutorial/blob/main/Research_Analytics_IEEE_ICASSP_Case_Study.ipynb" target="_blank">
+  <img
+    src="https://colab.research.google.com/assets/colab-badge.svg"
+    alt="Open in Colab"
+    style="width:350px;">
+</a>
+  </p>
 
 ## Features
 
